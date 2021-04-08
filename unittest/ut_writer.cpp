@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <time/time.hpp>
+
 #include "source/lib/writer.hpp"
 
 using namespace std::chrono_literals;
@@ -14,7 +16,7 @@ TEST_F(ut_writer, create) {
 }
 
 TEST_F(ut_writer, quote) {
-    auto local_time = miu::time::clock::now();
+    auto local_time = miu::time::now();
 
     {
         miu::mktdump::writer writer { "ut_writer" };
@@ -61,7 +63,7 @@ TEST_F(ut_writer, quote) {
 }
 
 TEST_F(ut_writer, depth) {
-    auto local_time = miu::time::clock::now();
+    auto local_time = miu::time::now();
 
     {
         miu::mktdump::writer writer { "ut_writer" };
