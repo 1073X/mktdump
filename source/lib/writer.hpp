@@ -3,16 +3,22 @@
 #include <com/strcat.hpp>
 #include <filesystem>
 #include <fstream>
-#include <mkt/depth.hpp>
-#include <mkt/quote.hpp>
-#include <ref/symbol.hpp>
+#include <mkt/topic.hpp>
 
 namespace miu::mktdump {
 
 class writer {
   public:
-    writer(std::string_view name)
+    explicit writer(std::string_view name)
         : _ss { com::strcat(name, "dmp").str(), std::ios_base::app } {}
+
+    writer(writer&& another)
+        : _ss(std::move(another._ss)) {}
+
+    auto& operator=(writer&& another) {
+        std::swap(another._ss, _ss);
+        return *this;
+    }
 
     auto write(uint32_t index,
                time::stamp local_time,
@@ -26,6 +32,11 @@ class writer {
         if (quote->depth_id()) {
             _ss.write((const char*)depth, sizeof(mkt::depth));
         }
+    }
+
+    auto write(mkt::topic const& topic) {
+        assert(topic);
+        write(topic.index(), topic.local_time(), topic.symbol(), topic.quote(), topic.depth());
     }
 
   private:
